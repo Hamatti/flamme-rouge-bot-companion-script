@@ -1,7 +1,10 @@
 import random
 
+PELOTON_ATTACK_CARD = 0
+
 # Rouleur deck with added 0 for 2/9 attack card
-PELOTON_DECK = [2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 9, 9, 9, 0]
+PELOTON_DECK = [2, 2, 2, 3, 3, 3, 4, 4, 4,
+                5, 5, 5, 9, 9, 9, PELOTON_ATTACK_CARD]
 MUSCLE_SPRINTER_DECK = [3, 3, 3, 4, 4, 4, 5, 5, 5, 5,
                         6, 6, 6, 7, 7, 7]  # Sprinter deck with added 5
 MUSCLE_ROULEUR_DECK = [2, 2, 2, 3, 3, 3, 4, 4,
@@ -38,19 +41,21 @@ class BotCyclist:
 
     def __init__(self, name, team):
         if team == 'PELOTON':
-            self.cards = PELOTON_DECK.copy()
+            self._cards = PELOTON_DECK.copy()
         elif team == 'MUSCLE-SPRINTER':
-            self.cards = MUSCLE_SPRINTER_DECK.copy()
+            self._cards = MUSCLE_SPRINTER_DECK.copy()
         elif team == 'MUSCLE-ROULEUR':
-            self.cards = MUSCLE_ROULEUR_DECK.copy()
+            self._cards = MUSCLE_ROULEUR_DECK.copy()
 
         self.name = name
 
+        self.cards = self._cards.copy()
         random.shuffle(self.cards)
 
     def draw(self):
         if len(self.cards) < 1:
-            raise Exception(f'No cards left for {self.name}')
+            self.cards = self._cards.copy()
+            random.shuffle(self.cards)
 
         return self.cards.pop()
 
@@ -111,7 +116,7 @@ if __name__ == '__main__':
         print('\n===')
         for bot in bots:
             drawn = bot.draw()
-            if drawn == 0:
+            if drawn == PELOTON_ATTACK_CARD:
                 drawn = 'PELOTON ATTACK (2/9)'
             print(f'{bot.name} drew {drawn}')
 
